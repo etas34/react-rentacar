@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect,useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   faCalendarDays,
-  faCar,
+  faUser,
+  faGear,
   faPerson,
   faLocationDot
 } from "@fortawesome/free-solid-svg-icons";
@@ -14,6 +15,7 @@ import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css"; // main css file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { format } from "date-fns";
+import { MainContext } from "../../Context";
 
 const Header = (props) => {
   const [openDate, setOpenDate] = useState(false);
@@ -22,6 +24,20 @@ const Header = (props) => {
   const [date, setDate] = useState([
     { startDate: new Date(), endDate: new Date(), key: "selection" },
   ]);
+  
+  const [openDashboard, setOpenDashboard] = useState(false);
+  const authToken = localStorage.getItem("authToken");
+
+  
+  const {cauthToken} = useContext(MainContext)
+
+  useEffect(() => { 
+    if (authToken) {
+    setOpenDashboard(true);
+  } else {
+    setOpenDashboard(false);
+  }
+  }, [authToken]);
 
   const [openOptions, setOpenOptions] = useState(false);
   const [options, setOptions] = useState({
@@ -68,19 +84,18 @@ const Header = (props) => {
       navigate("/vehicles", { state: { searchParams } });
     
   }
+
+  
   return (
     <div className="header">
       <div className="headerContainer">
         <div className="headerList">
-          <div className="headerListItem active">
-            <FontAwesomeIcon icon={faCar} />
-            <span>Vehicles</span>
-          </div>
-          <div className="headerListItem">
-            <PeopleIcon icon={faCar} />
-            <span>Owners</span>
-          </div>
-          
+          { openDashboard  && 
+           <Link to="/dashboard" style={{ color: "white" }}> <div className="headerListItem active">
+            <FontAwesomeIcon icon={faGear} />
+            <span>Dashboard</span>
+          </div></Link>
+            }
           {props.type !== "list" && (
             <div className="headerSearch">
               <div className="headerSearchItem">
