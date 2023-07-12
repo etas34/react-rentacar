@@ -32,11 +32,14 @@ const List = () => {
   const [vehicles, setVehicles] = useState([]);
 
 
-
   useEffect(() => {
       
     console.log(searchParams)
-    let url=`${API_URL}vehicle/?seats=${ searchParams.seats}&start_date=${searchParams.start}&end_date=${searchParams.end}`
+    let url=`${API_URL}vehicle/?start_date=${searchParams.start}&end_date=${searchParams.end}`
+    
+    if (searchParams.seats!==0 ) {
+      url+=`&seats=${searchParams.seats}`
+    }    
     if (searchParams.location!=='' ) {
       url+=`&location=${searchParams.location}`
     }

@@ -27,7 +27,12 @@ const Navbar = () => {
 
   const navigate = useNavigate();
 
-  const {setCauthToken} = useContext(MainContext)
+  const {
+    setCauthToken,
+    setCauthTokenType,
+    setCuserId,
+    setCuserName,
+    setCname} = useContext(MainContext)
 
   useEffect(()=>{
     setAuthToken(localStorage.getItem('authToken'))
@@ -95,6 +100,10 @@ const Navbar = () => {
         window.localStorage.setItem("name", data.name);
 
         setCauthToken(data.access_token)
+        setCauthTokenType(data.token_type)
+        setCuserId(data.user_id)
+        setCuserName(data.user_name)
+        setCname(data.name)
 
         
       })
@@ -121,6 +130,12 @@ const Navbar = () => {
     window.localStorage.removeItem('userId')
     window.localStorage.removeItem('name')
     
+    setCauthToken(null)
+    setCauthTokenType(null)
+    setCuserId('')
+    setCuserName('')
+    setCname('')
+
     navigate(`/`)
   }
 

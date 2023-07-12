@@ -68,7 +68,7 @@ const Vehicle = (props) => {
           </List>
         </CardContent>
         <CardActions>
-          <Typography startIcon={PersonIcon} variant="body2" sx={{ flex: 1 }}>
+          <Typography startIcon={PersonIcon} variant="body" sx={{ flex: 1, fontWeight:'bold' }}>
           €{props.car.price}
           </Typography>
 

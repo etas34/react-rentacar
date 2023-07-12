@@ -18,7 +18,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import Header from "../../components/header/Header";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { DateRange } from "react-date-range";
 import { useParams } from "react-router-dom";
 
@@ -26,10 +26,16 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
 import PeopleIcon from "@mui/icons-material/People";
+import { MainContext } from "../../Context";
+import { format } from "date-fns";
 
 const API_URL = "http://127.0.0.1:8000/";
 
 const Detail = () => {
+  
+  const {cuserId} = useContext(MainContext)
+
+
   const params = useParams();
 
   const [vehicle, setVehicle] = useState([]);
@@ -51,7 +57,12 @@ const Detail = () => {
   ]);
 
   const handleOpen = () => {
-    setOpen(true);
+    console.log(cuserId)
+    if (cuserId) {
+      setOpen(true);
+    } else {
+      alert("You need to login first."); 
+    }
   };
 
   const handleClose = () => {
@@ -59,13 +70,47 @@ const Detail = () => {
   };
 
   const handleSubmit = () => {
-    // Perform any necessary actions with the selected date range
-    console.log("Selected Date:", date);
-    // Add your logic here to handle the submission
+   
+    console.log("Selected Date:",format(date[0].startDate,"yyyy-MM-dd"));
+
+    
+    const json_string= JSON.stringify({
+      user_id: cuserId,
+      vehicle_id : params.id,
+      start_date : format(date[0].startDate,"yyyy-MM-dd"),
+      end_date : format(date[0].endDate,"yyyy-MM-dd")
+    })
+
+    const requestOption= {
+      method : 'POST',
+      headers: { 'Content-Type' : 'application/json'},
+      body : json_string
+    }
+    
+    fetch(API_URL + 'booking/', requestOption)
+    .then(response=>{
+      if(response.ok) {
+        return response.json()
+      }  
+      throw response      
+    })
+    .then(data => {
+      alert("Booking created succesfully!")
+
+    })
+    .catch(error=>{
+      console.log(error)
+      if (error.status===409) {
+        alert('Vehicle is not available during the specified time')
+      }
+    })
+
+
+
+
     handleClose();
   };
-
-  console.log(vehicle.photos)
+  
   return (
     <div>
       <Navbar />

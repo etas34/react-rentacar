@@ -32,16 +32,16 @@ const Header = (props) => {
   const {cauthToken} = useContext(MainContext)
 
   useEffect(() => { 
-    if (authToken) {
+    if (cauthToken) {
     setOpenDashboard(true);
   } else {
     setOpenDashboard(false);
   }
-  }, [authToken]);
+  }, [cauthToken]);
 
   const [openOptions, setOpenOptions] = useState(false);
   const [options, setOptions] = useState({
-    NumberOfSeats: 5,
+    NumberOfSeats: 0,
     Transmission: [],
     Fuel: [],
   });

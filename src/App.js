@@ -4,7 +4,7 @@ import List from "./pages/list/List";
 import Detail from "./pages/detail/Detail";
 import Dashboard from "./pages/dashboard/Dashboard";
 import { MainContext } from "./Context";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
   const authToken = localStorage.getItem("authToken");
@@ -16,8 +16,26 @@ function App() {
 
   const data = {
     cauthToken,
+    cauthTokenType,
+    cuserId,
+    cuserName,
+    cname,
     setCauthToken,
+    setCauthTokenType,
+    setCuserId,
+    setCuserName,
+    setCname,
   };
+
+  useEffect(() => {
+    
+    setCauthToken(localStorage.getItem('authToken'))
+    setCauthTokenType(localStorage.getItem('authTokenType'))
+    setCuserId(localStorage.getItem('userId'))
+    setCuserName(localStorage.getItem('userName'))
+    setCname(localStorage.getItem('name'))
+
+  },[])
 
   const ProtectedRoute = ({ path, element }) => {
     return authToken ? (
