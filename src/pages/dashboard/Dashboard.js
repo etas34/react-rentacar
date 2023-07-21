@@ -9,6 +9,7 @@ const Dashboard = () => {
   const [age, setAge] = useState("");
   const [newTab, setNewTab] = useState(false);
   const [listTab, setListTab] = useState(true);
+  const [bookingTab, setBookingTab] = useState(false);
 
   const handleChange = (event) => {
     setAge(event.target.value);
@@ -28,11 +29,18 @@ const Dashboard = () => {
   const switchNewTab = () => {
     setNewTab(true);
     setListTab(false);
+    setBookingTab(false);
   }
 
   const switchListTab = () => {
     setNewTab(false);
     setListTab(true);
+    setBookingTab(false);
+  }
+  const switchBookingTab = () => {
+    setNewTab(false);
+    setListTab(false);
+    setBookingTab(true);
   }
 
   return (
@@ -45,13 +53,13 @@ const Dashboard = () => {
         <Grid container spacing={2}>
           {/* Filtering section */}
           <Grid item xs={12} md={3}>
-            <Sidebar switchNewTab={switchNewTab} switchListTab={switchListTab}/>
+            <Sidebar switchNewTab={switchNewTab} switchListTab={switchListTab} switchBookingTab={switchBookingTab}/>
           </Grid>
 
           {/* Car list and create section */}
           <Grid item xs={12} md={9}>
             <Grid container spacing={2}>
-              <Main newTab={newTab} listTab={listTab}/>
+              <Main newTab={newTab} listTab={listTab} bookingTab={bookingTab}/>
             </Grid>
           </Grid>
         </Grid>

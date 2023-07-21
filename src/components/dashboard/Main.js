@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import VehicleDash from "../Vehicle/VehicleDash";
 import { MainContext } from "../../Context";
+import BookingList from "../booking/BookingList";
 
 const API_URL = "http://127.0.0.1:8000/";
 
@@ -27,6 +28,7 @@ const Main = (props) => {
   const [seats, setSeats] = React.useState(5);
   const [images, setImages] = React.useState([]);
   const [vehicles, setVehicles] = React.useState([]);
+  const [bookings, setBookings] = React.useState([]);
 
   const { cauthToken, cauthTokenType, cuserId } = useContext(MainContext);
 
@@ -34,8 +36,9 @@ const Main = (props) => {
   useEffect (()=> {
     if (cuserId) {
       getVehicles();
+      getBookings();
     }
-  }, [cuserId])
+  }, [cuserId, brand])
 
   console.log('userid', cuserId, cauthToken, cauthTokenType)
   const handleChangeFuel = (event) => {
@@ -150,11 +153,6 @@ const Main = (props) => {
   const transmissions = ["Automatic", "Manual"];
 
 
-  useEffect (()=> {
-    if (cuserId) {
-      getVehicles();
-    }
-  }, [brand])
 
   const getVehicles = () => {
 
@@ -177,11 +175,25 @@ const Main = (props) => {
       console.log(vehicles)
   }
 
+  const getBookings = () => {
+    fetch(API_URL+'user/'+cuserId+'/bookings')
+    .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error(response.statusText);
+    })
+    .then((data) => {
+      setBookings(data);
+      
+    })
+  }
+
   return (
-    <div>
+    <div sx={{ padding: 5 }}>
       {props.newTab && (
-        <React.Fragment>
-          <Paper elevation={3}>
+        <React.Fragment >
+          <Paper elevation={3} sx={{ marginTop: 2 }}>
             <Box sx={{ padding: 5 }}>
               <Typography variant="h6" sx={{ paddingBottom: 5 }}>
                 Add New Vehicle
@@ -324,6 +336,14 @@ const Main = (props) => {
               <VehicleDash key={index} car={car} />
             </Grid>
           ))}
+        </Grid>
+      )}
+            {props.bookingTab && (
+        <Grid container spacing={2} sx={{ marginTop: 5 }}>
+          
+           
+      <BookingList bookings={bookings} />
+           
         </Grid>
       )}
     </div>
