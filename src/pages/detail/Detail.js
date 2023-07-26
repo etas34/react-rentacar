@@ -27,7 +27,8 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
 import PeopleIcon from "@mui/icons-material/People";
 import { MainContext } from "../../Context";
-import { format } from "date-fns";
+import { addDays, eachDayOfInterval, format, subDays } from "date-fns";
+import CustomSnackbar from "../../components/UI/CustomSnackbar";
 
 const API_URL = "http://127.0.0.1:8000/";
 
@@ -39,6 +40,10 @@ const Detail = () => {
   const params = useParams();
 
   const [vehicle, setVehicle] = useState([]);
+  const [disabledDates, setDisabledDates] = useState([]);
+  
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   useEffect(() => {
     fetch(`${API_URL}vehicle/${params.id}`)
@@ -56,12 +61,36 @@ const Detail = () => {
     { startDate: new Date(), endDate: new Date(), key: "selection" },
   ]);
 
+
+  const handleSnackbarOpen = (message) => {
+    setSnackbarMessage(message);
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    setSnackbarOpen(false);
+  };
+
+  const getAllDatesInRange = (startDate, endDate) => {
+    const dates = eachDayOfInterval({ start: startDate, end: endDate });
+    return dates;
+  };
+  useEffect(() => {
+    if (vehicle.length!==0) {
+      let disabledDatesArray=[];
+      vehicle.bookings.map((e)=>{
+        disabledDatesArray.push(...getAllDatesInRange(new Date(e.start_date),new Date(e.end_date)))
+      })   
+      setDisabledDates(disabledDatesArray)
+    }     
+  }, [open]);
+
   const handleOpen = () => {
     console.log(cuserId)
     if (cuserId) {
       setOpen(true);
     } else {
-      alert("You need to login first."); 
+      handleSnackbarOpen('You need to login first.');
     }
   };
 
@@ -110,6 +139,8 @@ const Detail = () => {
 
     handleClose();
   };
+
+
   
   return (
     <div>
@@ -182,14 +213,15 @@ const Detail = () => {
         <Dialog open={open} onClose={handleClose}>
           <DialogTitle>Book Now</DialogTitle>
           <DialogContent>
-            <DateRange
-              editableDateInputs={true}
-              onChange={(item) => setDate([item.selection])}
-              moveRangeOnFirstSelection={false}
-              ranges={date}
-              minDate={new Date()}
-            />
-          </DialogContent>
+          <DateRange
+            editableDateInputs={true}
+            onChange={(item) => setDate([item.selection])}
+            moveRangeOnFirstSelection={false}
+            ranges={date}
+            minDate={new Date()}
+            disabledDates={disabledDates}
+          />
+        </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
             <Button onClick={handleSubmit} color="primary">
@@ -198,6 +230,12 @@ const Detail = () => {
           </DialogActions>
         </Dialog>
       </Container>
+       <CustomSnackbar
+        open={snackbarOpen}
+        message={snackbarMessage}
+        onClose={handleSnackbarClose}
+        type='warning'
+      />
     </div>
   );
 };

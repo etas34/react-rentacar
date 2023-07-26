@@ -94,18 +94,6 @@ const VehicleDash = (props) => {
               </ListItemIcon>
               <ListItemText primary={props.car.seats} />
             </ListItem>
-            {props.car.bookings &&
-          props.car.bookings.length > 0 &&
-          props.car.bookings.map((booking) => (
-            <ListItem key={booking.start_date + booking.end_date}>
-              <ListItemText
-                primary={`Booking: ${format(
-                  new Date(booking.start_date),
-                  "dd/MM/yyyy"
-                )} - ${format(new Date(booking.end_date), "dd/MM/yyyy")}`}
-              />
-            </ListItem>
-          ))}
           </List>
         </CardContent>
         <CardActions>
