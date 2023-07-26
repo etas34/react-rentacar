@@ -44,6 +44,7 @@ const Detail = () => {
   
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarType, setSnackbarType] = useState('');
 
   useEffect(() => {
     fetch(`${API_URL}vehicle/${params.id}`)
@@ -62,8 +63,9 @@ const Detail = () => {
   ]);
 
 
-  const handleSnackbarOpen = (message) => {
+  const handleSnackbarOpen = (message, type) => {
     setSnackbarMessage(message);
+    setSnackbarType(type);
     setSnackbarOpen(true);
   };
 
@@ -90,7 +92,7 @@ const Detail = () => {
     if (cuserId) {
       setOpen(true);
     } else {
-      handleSnackbarOpen('You need to login first.');
+      handleSnackbarOpen('You need to login first.', 'warning');
     }
   };
 
@@ -124,13 +126,13 @@ const Detail = () => {
       throw response      
     })
     .then(data => {
-      alert("Booking created succesfully!")
+      handleSnackbarOpen('Booking created succesfully!', 'success');
 
     })
     .catch(error=>{
       console.log(error)
       if (error.status===409) {
-        alert('Vehicle is not available during the specified time')
+        handleSnackbarOpen('Vehicle is not available during the specified time', 'error');
       }
     })
 
@@ -234,7 +236,7 @@ const Detail = () => {
         open={snackbarOpen}
         message={snackbarMessage}
         onClose={handleSnackbarClose}
-        type='warning'
+        type={snackbarType}
       />
     </div>
   );

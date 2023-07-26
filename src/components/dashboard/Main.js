@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect,useState } from "react";
 
 import {
   Box,
@@ -15,6 +15,7 @@ import {
 import VehicleDash from "../Vehicle/VehicleDash";
 import { MainContext } from "../../Context";
 import BookingList from "../booking/BookingList";
+import CustomSnackbar from "../UI/CustomSnackbar";
 
 const API_URL = "http://127.0.0.1:8000/";
 
@@ -31,6 +32,18 @@ const Main = (props) => {
   const [bookings, setBookings] = React.useState([]);
 
   const { cauthToken, cauthTokenType, cuserId } = useContext(MainContext);
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+
+  const handleSnackbarOpen = (message) => {
+    setSnackbarMessage(message);
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    setSnackbarOpen(false);
+  };
 
 
   useEffect (()=> {
@@ -139,7 +152,7 @@ const Main = (props) => {
         setLocation('')
         setFuel('Gasoline')
         setTransmission('Automatic')
-        alert('Vehicle created succesfully!')
+        handleSnackbarOpen("Vehicle created succesfully!");
       })
       .catch((error) => {
         console.log(error);
@@ -346,6 +359,13 @@ const Main = (props) => {
            
         </Grid>
       )}
+      
+      <CustomSnackbar
+        open={snackbarOpen}
+        message={snackbarMessage}
+        onClose={handleSnackbarClose}
+        type='success'
+      />
     </div>
   );
 };
