@@ -28,6 +28,7 @@ import LocalGasStationIcon from "@mui/icons-material/LocalGasStation";
 import PeopleIcon from "@mui/icons-material/People";
 import { MainContext } from "../../Context";
 import { addDays, eachDayOfInterval, format, subDays } from "date-fns";
+import CustomSnackbar from "../../components/UI/CustomSnackbar";
 
 const API_URL = "http://127.0.0.1:8000/";
 
@@ -40,6 +41,9 @@ const Detail = () => {
 
   const [vehicle, setVehicle] = useState([]);
   const [disabledDates, setDisabledDates] = useState([]);
+  
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   useEffect(() => {
     fetch(`${API_URL}vehicle/${params.id}`)
@@ -56,6 +60,16 @@ const Detail = () => {
   const [date, setDate] = useState([
     { startDate: new Date(), endDate: new Date(), key: "selection" },
   ]);
+
+
+  const handleSnackbarOpen = (message) => {
+    setSnackbarMessage(message);
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    setSnackbarOpen(false);
+  };
 
   const getAllDatesInRange = (startDate, endDate) => {
     const dates = eachDayOfInterval({ start: startDate, end: endDate });
@@ -76,7 +90,7 @@ const Detail = () => {
     if (cuserId) {
       setOpen(true);
     } else {
-      alert("You need to login first."); 
+      handleSnackbarOpen('You need to login first.');
     }
   };
 
@@ -216,6 +230,12 @@ const Detail = () => {
           </DialogActions>
         </Dialog>
       </Container>
+       <CustomSnackbar
+        open={snackbarOpen}
+        message={snackbarMessage}
+        onClose={handleSnackbarClose}
+        type='warning'
+      />
     </div>
   );
 };

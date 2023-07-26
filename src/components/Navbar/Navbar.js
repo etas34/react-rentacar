@@ -10,6 +10,7 @@ import {
 import "./navbar.css";
 import { Link, useNavigate } from "react-router-dom";
 import { MainContext } from "../../Context";
+import CustomSnackbar from "../UI/CustomSnackbar";
 
 const API_URL = "http://127.0.0.1:8000/";
 
@@ -26,6 +27,19 @@ const Navbar = () => {
   const [name, setName] = useState("");
 
   const navigate = useNavigate();
+
+  
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+
+  const handleSnackbarOpen = (message) => {
+    setSnackbarMessage(message);
+    setSnackbarOpen(true);
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    setSnackbarOpen(false);
+  };
 
   const {
     setCauthToken,
@@ -108,7 +122,7 @@ const Navbar = () => {
         
       })
       .catch((error) => {
-        alert(error.message);
+        handleSnackbarOpen("Login failed. Please check your credentials.");
       });
   
     console.log("Login", email, password);
@@ -141,7 +155,7 @@ const Navbar = () => {
 
   const handleRegister = () => {
     if (password !== confirmPassword) {
-      alert("Password and confirm password do not match");
+      handleSnackbarOpen("Password and confirm password do not match");
       return;
     }
     // Perform register logic using email and password
@@ -172,7 +186,8 @@ const Navbar = () => {
     })
     .catch(error=>{
       console.log(error)
-      alert(error)
+      
+      handleSnackbarOpen(error);
     })
 
 
@@ -275,6 +290,13 @@ const Navbar = () => {
           <Button onClick={handleRegisterClose}>Cancel</Button>
         </DialogActions>
       </Dialog>
+      
+      <CustomSnackbar
+        open={snackbarOpen}
+        message={snackbarMessage}
+        onClose={handleSnackbarClose}
+        type='error'
+      />
     </div>
   );
 };
